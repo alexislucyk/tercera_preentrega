@@ -60,3 +60,18 @@ def cliente_form(req: HttpRequest):
         miFormulario=ClienteFormulario()
 
         return render(req, 'cliente_form.html', {'miFormulario': miFormulario})
+
+
+
+def buscar_cliente(req):
+    return render(req, 'buscar_cliente.html')
+
+def buscar(req):
+    if req.GET["apellido"]:
+        apellido=req.GET["apellido"]
+        clies=Cliente.objects.filter(apellido__icontains=apellido)
+        if clies:
+
+            return render(req, 'resultdoBusqueda.html', {'clies': clies})
+    else:
+        return HttpResponse('No se encontro nada')

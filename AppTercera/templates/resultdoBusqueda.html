@@ -1,0 +1,15 @@
+{% extends 'padre.html' %}
+
+{% block contenidoQueCambia %}
+<h1>Resultado de busqueda</h1> 
+
+<ul>
+    
+    {% for clie in clies %}
+        <li>
+            {{clie.apellido}} - {{clie.nombre}}
+        </li>
+    {% endfor %}
+        
+</ul>       
+{% endblock contenidoQueCambia %}
