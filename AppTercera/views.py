@@ -2,6 +2,10 @@ from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
 from .models import Cliente, Productos, Proveedores
 from .forms import ClienteFormulario
+from django.views.generic.list import ListView  # Lista los registros que obtiene
+from django.views.generic.detail import DetailView  # Detalle de los registros
+from django.views.generic.edit import DeleteView, UpdateView, CreateView  # Borra, Actualiza y Crea registros
+
 # Create your views here.
 def cliente(req, apellido, nombre, telefono):
     cliente=Cliente(apellido=apellido, nombre=nombre, telefono=telefono)
@@ -75,3 +79,78 @@ def buscar(req):
             return render(req, 'resultdoBusqueda.html', {'clies': clies})
     else:
         return HttpResponse('No se encontro nada')
+    
+def eliminaCliente(req, id):
+    if req.method == 'POST':
+        cliente = Cliente.objects.get(id=id)
+        cliente.delete()
+
+        lista=Cliente.objects.all()
+        return render(req, 'lista_clientes.html', {'lista_clientes': lista})
+    
+def editarCliente(req, id):
+    
+    cliente = Cliente.objects.get(id=id)
+    
+    if req.method == 'POST':
+      
+        miFormulario=ClienteFormulario(req.POST)
+      
+        if miFormulario.is_valid():
+            print(miFormulario.cleaned_data)
+            data=miFormulario.cleaned_data
+            cliente.nombre=data['nombre']
+            cliente.apellido=data['apellido']
+            cliente.telefono=data['telefono']
+            cliente.save()
+            return render(req, 'inicio.html', {'mensaje': 'Cliente actualizado con exito.'})
+        else:
+          return render(req, 'inicio.html', {'mensaje': 'formulario invalido'})
+    else:
+        miFormulario=ClienteFormulario(initial={
+            'nombre': cliente.nombre,
+            'apellido': cliente.apellido,
+            'telefono': cliente.telefono,
+        })
+
+        return render(req, 'editarCliente.html', {'miFormulario': miFormulario, 'id': cliente.id})
+
+class ClienteList(ListView):
+    model = Cliente
+    template_name = 'cliente_list.html'
+    context_object_name = 'clientes'
+
+class ClienteDetail(DetailView):
+    model = Cliente
+    template_name = "cliente_detail.html"
+    context_object_name = 'cliente'
+
+class ClienteCreate(CreateView):
+    model = Cliente
+    template_name = 'cliente_create.html'
+    fields = ['nombre', 'apellido', 'telefono']  # campos a completar en el formulario cuando renderiza cliente_create.html
+    success_url = '/AppTercera/'
+
+class ClienteUpdate(UpdateView):
+    model = Cliente
+    template_name = 'cliente_update.html'
+    fields = ['__all__']
+    success_url = '/AppTercera/'
+
+class ClienteDelete(DeleteView):
+    model = Cliente
+    template_name = 'cliente_delete.html'
+    success_url = '/AppTercera/'
+
+
+
+
+
+
+
+
+
+
+
+
+

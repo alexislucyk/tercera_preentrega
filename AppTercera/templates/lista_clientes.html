@@ -1,18 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de clientes</title>
-</head>
-<body>
+{% extends 'padre.html' %}
+
+{% block contenidoQueCambia %}
+<h1>Buscar Clientes</h1>            
+<form action="{% url 'Lista_Clientes' %}" method="get">
+
     <ul>
         
         {% for cliente in lista_clientes %}
-            <li>{{cliente.nombre}}</li>
+            <li>{{cliente.nombre}} {{cliente.apellido}}</li>
+            <div>
+                <form action="{% url 'Eliminar_Cliente' cliente.id %}" method="post"> {% csrf_token %}
+                    <button type="submit">Eliminar</button>
+                </form>
+                <button>
+                    <a href="{% url 'Editar_Cliente' cliente.id %}">Editar</a>
+                </button>
+            </div>
         {% endfor %}
             
-
     </ul>
-</body>
-</html>
+    <a href="{% url 'Pag_ClienteForm' %}">Agregar Cliente</a>
+
+</form>          
+{% endblock contenidoQueCambia %}
+
