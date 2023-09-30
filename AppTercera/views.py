@@ -129,18 +129,18 @@ class ClienteCreate(CreateView):
     model = Cliente
     template_name = 'cliente_create.html'
     fields = ['nombre', 'apellido', 'telefono']  # campos a completar en el formulario cuando renderiza cliente_create.html
-    success_url = '/AppTercera/'
+    success_url = '/app-tercera/'
 
 class ClienteUpdate(UpdateView):
     model = Cliente
     template_name = 'cliente_update.html'
-    fields = ['__all__']
-    success_url = '/AppTercera/'
+    fields = ('__all__')
+    success_url = '/app-tercera/'
 
 class ClienteDelete(DeleteView):
     model = Cliente
     template_name = 'cliente_delete.html'
-    success_url = '/AppTercera/'
+    success_url = '/app-tercera/'
 
 
 

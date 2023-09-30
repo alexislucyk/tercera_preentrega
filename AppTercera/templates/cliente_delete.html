@@ -1,12 +1,14 @@
 {% extends 'padre.html' %}
 
 {% block contenidoQueCambia %}
-<h1>Formulario de clientes</h1>            
-<form method="post">{% csrf_token %}
+<h1>Formulario de clientes</h1>   
 
-    <p>Desea eliminar?</p>
-    
-    <button type="submit">Confirmar</button>
-    <button><a href="{% url 'Inicio' %}"></a>Cancelar</button>
-</form>          
+    <form method="post">{% csrf_token %}
+
+        <p>Desea eliminar?</p>
+        
+        <button type="submit">Confirmar</button>
+
+        <button><a href="{% url 'Inicio' %}">Cancelar</a></button>
+    </form>          
 {% endblock contenidoQueCambia %}
