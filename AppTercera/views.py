@@ -1,14 +1,15 @@
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
-from .models import Cliente, Productos, Proveedores
-from .forms import ClienteFormulario
 from django.views.generic.list import ListView  # Lista los registros que obtiene
 from django.views.generic.detail import DetailView  # Detalle de los registros
 from django.views.generic.edit import DeleteView, UpdateView, CreateView  # Borra, Actualiza y Crea registros
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm # Importamos formularios de autenticacion
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm # Importamos formularios de autenticacion
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+
+from .models import Cliente, Productos, Proveedores
+from .forms import ClienteFormulario, UserEditForm
 
 # Create your views here.
 def cliente(req, apellido, nombre, telefono):
@@ -18,9 +19,9 @@ def cliente(req, apellido, nombre, telefono):
     <p>Cliente: {cliente.apellido} {cliente.nombre} {cliente.telefono} Agregado!!</p>
     """)
 
-def productos(req, codigo, descripcion, precio):
-    productos=Productos(codigo=codigo, descripcion=descripcion, precio=precio)
-    productos.save()
+def producto(req, codigo, descripcion, precio):
+    producto=Productos(codigo=codigo, descripcion=descripcion, precio=precio)
+    producto.save()
     return HttpResponse(f"""
     <p>Producto: {productos.codigo} {productos.descripcion} {productos.precio} Agregado!!</p>
     """)
@@ -44,7 +45,9 @@ def clientes(req):
     return render(req, 'lista_clientes.html', {'lista_clientes': lista})
 
 def productos(req):
-    return render(req, 'productos.html')
+    lista=Productos.objectsall()
+    return render(req, 'productos.html', {'productos': lista})
+
 
 def proveedores(req):
     return render(req, 'proveedores.html')
@@ -188,3 +191,26 @@ def register(req):
     else:
         miFormulario=UserCreationForm()
         return render(req, 'registro.html', {'miFormulario': miFormulario})
+    
+def editar_perfil(req):
+
+    usuario = req.user
+    
+    if req.method == 'POST':
+      
+        miFormulario=UserEditForm(req.POST, instance=req.user)
+      
+        if miFormulario.is_valid():
+            data=miFormulario.cleaned_data
+            usuario.first_name=data['first_name']
+            usuario.last_name=data['last_name']
+            usuario.email=data['email']
+            usuario.set_password(data['password1'])
+            usuario.save()
+            return render(req, 'inicio.html', {'mensaje': 'Perfil actualizado con exito.'})
+        else:
+          return render(req, 'editarPerfil.html', {'miFormulario': miFormulario})
+    else:
+        miFormulario=UserEditForm(instance=req.user)
+
+        return render(req, 'editarPerfil.html', {'miFormulario': miFormulario})
