@@ -1,5 +1,6 @@
 
 from django.urls import path
+from django.contrib.auth.views import LogoutView
 from AppTercera.views import *
 
 urlpatterns = [
@@ -18,4 +19,8 @@ urlpatterns = [
     path('crea-cliente/', ClienteCreate.as_view(), name='CreaCliente'),
     path('actualiza-cliente/<pk>', ClienteUpdate.as_view(), name='ActualizaCliente'),
     path('elimina-cliente/<pk>', ClienteDelete.as_view(), name='EliminaCliente'),
+    path('login/', loginView, name='Login'),
+    path('logout/', LogoutView.as_view(template_name='logout.html'), name='Logout'),
+    path('registrar/', register, name='Registrar'),
+    path('aboutme/', aboutme, name='AboutMe'),
 ]
