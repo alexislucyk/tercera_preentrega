@@ -24,5 +24,6 @@ urlpatterns = [
     path('registrar/', register, name='Registrar'),
     path('aboutme/', aboutme, name='AboutMe'),
     path('editar-perfil/', editar_perfil, name='EditarPerfil'),
+    path('agregar-avatar/', agregar_avatar, name='AgregarAvatar'),
 ]
 

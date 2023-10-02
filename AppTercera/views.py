@@ -8,8 +8,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
-from .models import Cliente, Productos, Proveedores
-from .forms import ClienteFormulario, UserEditForm
+from .models import Cliente, Productos, Proveedores, Avatar
+from .forms import ClienteFormulario, UserEditForm, AvatarFormulario
+
 
 # Create your views here.
 def cliente(req, apellido, nombre, telefono):
@@ -38,7 +39,12 @@ def lista_clientes(req):
     return render(req, 'lista_clientes.html', {'lista_clientes': lista})
 
 def inicio(req):
-    return render(req, 'inicio.html')
+    try:
+        avatar = Avatar.objects.get(user=req.user.id)
+        return render(req, 'inicio.html', {'url': avatar.imagen.url})
+    except:
+        return render(req, 'inicio.html')
+    
 
 def clientes(req):
     lista=Cliente.objects.all()
@@ -214,3 +220,21 @@ def editar_perfil(req):
         miFormulario=UserEditForm(instance=req.user)
 
         return render(req, 'editarPerfil.html', {'miFormulario': miFormulario})
+    
+def agregar_avatar(req):
+    if req.method=='POST':
+        miFormulario=AvatarFormulario(req.POST, req.FILES)
+
+        if miFormulario.is_valid():
+            
+            data=miFormulario.cleaned_data
+            avatar=Avatar(user=req.user, imagen=data['imagen'])
+            avatar.save()
+                
+            return render(req, 'inicio.html', {'mensaje': f'Avatar actualizado con exito!'})
+        else:
+            return render(req, 'inicio.html', {'mensaje': 'Formulario invalido'})
+
+    else:
+        miFormulario=AvatarFormulario()
+        return render(req, 'agregar_avatar.html', {'miFormulario': miFormulario})
